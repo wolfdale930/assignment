@@ -18,6 +18,8 @@ services:
       - PASSWORD_SALT_ROUND=10
     links:
       - "db"
+    networks:
+      - samenetwork
   app:
     image: areeb/app # image name used for building and deploying
     build: ./app # context folder for building docker app
@@ -25,6 +27,8 @@ services:
       - '80:80'
     depends_on:
       - api
+    networks:
+      - samenetwork
   db:
     image: postgres:13 # databse image. This will be pulled from docker.io
     restart: always
@@ -35,6 +39,8 @@ services:
       - POSTGRES_PASSWORD=anypass # admin password
     volumes: 
       - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql # this is used to init the database with some predefined values
+    networks:
+      - samenetwork
 networks:
   samenetwork:
     driver: bridge
