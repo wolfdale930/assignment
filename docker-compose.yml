@@ -1,16 +1,16 @@
 version: '3.1'
 services:
-  api:
-    image: areeb/api
-    build: ./api
+  api: # backend application
+    image: areeb/api # image name used for building and deploying
+    build: ./api # context folder for building docker app
     ports:
-      - '9090:9090'
+      - '9090:9090' # port that will be linked to host:container
     depends_on:
-      - db
+      - db  # specifying dependency allows the application to launch in an order
     environment:
-      - FRONTEND_URL=http://localhost
-      - EXPRESS_SERVER_PORT=9090
-      - PG_USER=postgres
+      - FRONTEND_URL=http://localhost  # used for cors. make sure it's url is same as the one we use while accessing the angular app
+      - EXPRESS_SERVER_PORT=9090 # nodejs express server port. Make sure to update the dockerfile in api/dockerfile if need to change this
+      - PG_USER=postgres # databse details 
       - PG_HOST=db
       - PG_DATABASE=postgres
       - PG_PASS=anypass
@@ -19,22 +19,22 @@ services:
     links:
       - "db"
   app:
-    image: areeb/app
-    build: ./app
+    image: areeb/app # image name used for building and deploying
+    build: ./app # context folder for building docker app
     ports:
       - '80:80'
     depends_on:
       - api
   db:
-    image: postgres:13
+    image: postgres:13 # databse image. This will be pulled from docker.io
     restart: always
     ports:
       - '5432:5432'
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=anypass
+      - POSTGRES_USER=postgres # admin user
+      - POSTGRES_PASSWORD=anypass # admin password
     volumes: 
-      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql # this is used to init the database with some predefined values
 networks:
   samenetwork:
     driver: bridge
